@@ -59,7 +59,8 @@ async function start() {
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
-          mongoUrl: mongoUri,
+          client: mongoose.connection.getClient(),
+          dbName: 'electrofest',
         }),
         cookie: {
           maxAge: 1000 * 60 * 60 * 24,
