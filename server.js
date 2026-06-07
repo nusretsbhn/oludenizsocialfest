@@ -1,3 +1,8 @@
+const nodeCrypto = require('crypto');
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = nodeCrypto.webcrypto;
+}
+
 require('dotenv').config();
 
 const express = require('express');
