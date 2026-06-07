@@ -11,6 +11,14 @@ const { router: adminRouter, initAdmin } = require('./routes/admin');
 
 const app = express();
 
+function requireEnv(name) {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`Eksik ortam değişkeni: ${name}`);
+  }
+  return value;
+}
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -22,16 +30,31 @@ const PORT = process.env.PORT || 3000;
 
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    const mongoUri = requireEnv('MONGODB_URI');
+
+    if (
+      !mongoUri.startsWith('mongodb://') &&
+      !mongoUri.startsWith('mongodb+srv://')
+    ) {
+      throw new Error(
+        `MONGODB_URI geçersiz. "mongodb://" ile başlamalı. Şu an: "${mongoUri.slice(0, 30)}..."`
+      );
+    }
+
+    requireEnv('SESSION_SECRET');
+    requireEnv('ADMIN_USER');
+    requireEnv('ADMIN_PASS');
+
+    await mongoose.connect(mongoUri);
     console.log('MongoDB connected');
 
     app.use(
       session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET.trim(),
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
-          mongoUrl: process.env.MONGODB_URI,
+          mongoUrl: mongoUri,
         }),
         cookie: {
           maxAge: 1000 * 60 * 60 * 24,
@@ -52,9 +75,6 @@ async function start() {
     });
   } catch (err) {
     console.error('Failed to start server:', err.message);
-    console.error(
-      'MongoDB is not reachable. Start MongoDB or update MONGODB_URI in .env'
-    );
     process.exit(1);
   }
 }
