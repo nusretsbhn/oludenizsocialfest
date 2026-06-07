@@ -1,0 +1,217 @@
+<%- include('partials/header') %>
+
+  <section class="hero<%= settings && settings.heroImage ? ' hero--image' : '' %>" id="hero"<% if (settings && settings.heroImage) { %> style="--hero-image: url('<%= settings.heroImage %>')"<% } %>>
+    <div class="hero-slider">
+      <div class="hero-slide active">
+        <h1><%= settings && settings.heroTitle1 ? settings.heroTitle1 : 'Elektro Füzyon' %></h1>
+        <p class="hero-subtitle"><%= settings && settings.heroSubtitle ? settings.heroSubtitle : 'Enerjiyi Hisset' %></p>
+      </div>
+      <div class="hero-slide">
+        <h1><%= settings && settings.heroTitle2 ? settings.heroTitle2 : 'Ritmi Hisset' %></h1>
+        <p class="hero-subtitle"><%= settings && settings.heroSubtitle ? settings.heroSubtitle : 'Enerjiyi Hisset' %></p>
+      </div>
+    </div>
+    <div class="hero-dots">
+      <button class="hero-dot active" data-slide="0" aria-label="Slayt 1"></button>
+      <button class="hero-dot" data-slide="1" aria-label="Slayt 2"></button>
+    </div>
+  </section>
+
+  <section class="event-info">
+    <div class="event-info-split">
+      <div
+        class="event-countdown"
+        id="countdown"
+        data-date="<%= settings && settings.countdownDate ? settings.countdownDate : '2026-12-20' %>"
+        data-time="<%= settings && settings.countdownTime ? settings.countdownTime : '20:00' %>"
+      >
+        <h3 class="countdown-title">Etkinliğe Kalan Süre</h3>
+        <div class="countdown-timer">
+          <div class="countdown-unit">
+            <span class="countdown-number" id="cd-days">00</span>
+            <span class="countdown-label">Gün</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-number" id="cd-hours">00</span>
+            <span class="countdown-label">Saat</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-number" id="cd-minutes">00</span>
+            <span class="countdown-label">Dakika</span>
+          </div>
+          <div class="countdown-unit">
+            <span class="countdown-number" id="cd-seconds">00</span>
+            <span class="countdown-label">Saniye</span>
+          </div>
+        </div>
+        <p class="countdown-ended" id="countdown-ended" hidden>Etkinlik başladı!</p>
+      </div>
+      <div class="event-details">
+        <div class="event-detail-item">
+          <span class="event-detail-label">Tarih</span>
+          <span class="event-detail-value"><%= settings && settings.eventDate ? settings.eventDate : '20-24 Aralık 2026' %></span>
+        </div>
+        <div class="event-detail-item">
+          <span class="event-detail-label">Mekan</span>
+          <span class="event-detail-value"><%= settings && settings.venue ? settings.venue : 'Festival Alanı' %></span>
+        </div>
+        <div class="event-detail-item">
+          <span class="event-detail-label">Konum</span>
+          <span class="event-detail-value"><%= settings && settings.venueCity ? settings.venueCity : 'Ölüdeniz, Muğla' %></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="section-artists">
+    <div class="container">
+      <h2 class="section-title">Sanatçılar</h2>
+      <% const featuredArtists = artists.filter(a => a.featured); %>
+      <% const otherArtists = artists.filter(a => !a.featured); %>
+
+      <% if (featuredArtists.length) { %>
+        <div class="artists-featured">
+          <% featuredArtists.forEach(artist => { %>
+            <article class="artist-card artist-card--featured">
+              <% if (artist.image) { %>
+                <img src="<%= artist.image %>" alt="<%= artist.name %>">
+              <% } else { %>
+                <div class="artist-placeholder"></div>
+              <% } %>
+              <div class="artist-info">
+                <h3><%= artist.name %></h3>
+                <% if (artist.role) { %><p><%= artist.role %></p><% } %>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <% if (otherArtists.length) { %>
+        <ul class="artists-list">
+          <% otherArtists.forEach(artist => { %>
+            <li class="artist-list-item">
+              <% if (artist.image) { %>
+                <img src="<%= artist.image %>" alt="<%= artist.name %>" class="artist-list-thumb">
+              <% } %>
+              <div>
+                <strong><%= artist.name %></strong>
+                <% if (artist.role) { %><span><%= artist.role %></span><% } %>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+
+      <% if (!artists.length) { %>
+        <p class="empty-state">Sanatçılar yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section" id="section-schedule">
+    <div class="container">
+      <h2 class="section-title">Program</h2>
+      <% const days = Object.keys(scheduleByDay).map(Number).sort((a, b) => a - b); %>
+
+      <% if (days.length) { %>
+        <div class="schedule-tabs">
+          <% days.forEach((day, i) => { %>
+            <button class="schedule-tab<%= i === 0 ? ' active' : '' %>" data-day="<%= day %>"><%= day %>. Gün</button>
+          <% }) %>
+        </div>
+
+        <% days.forEach((day, i) => { %>
+          <div class="schedule-panel<%= i === 0 ? ' active' : '' %>" data-day="<%= day %>">
+            <% if (scheduleByDay[day][0] && scheduleByDay[day][0].date) { %>
+              <p class="schedule-date"><%= scheduleByDay[day][0].date %></p>
+            <% } %>
+            <ul class="schedule-list">
+              <% scheduleByDay[day].forEach(item => { %>
+                <li class="schedule-item">
+                  <span class="schedule-time"><%= item.startTime %></span>
+                  <div class="schedule-details">
+                    <strong><%= item.artistName %></strong>
+                    <% if (item.stage) { %><span><%= item.stage %></span><% } %>
+                  </div>
+                </li>
+              <% }) %>
+            </ul>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">Program yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section" id="section-tickets">
+    <div class="container">
+      <h2 class="section-title">Biletler</h2>
+      <% if (tickets.length) { %>
+        <div class="tickets-grid tickets-grid--centered">
+          <% tickets.forEach(ticket => { %>
+            <article class="ticket-card ticket-card--single<%= ticket.highlighted ? ' ticket-card--highlighted' : '' %>">
+              <h3><%= ticket.name %></h3>
+              <p class="ticket-price"><%= (ticket.price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %> ₺</p>
+              <% if (ticket.features && ticket.features.length) { %>
+                <ul class="ticket-features">
+                  <% ticket.features.forEach(f => { %>
+                    <li class="<%= f.included ? 'included' : 'excluded' %>">
+                      <span><%= f.included ? '✓' : '✗' %></span> <%= f.text %>
+                    </li>
+                  <% }) %>
+                </ul>
+              <% } %>
+              <% if (ticket.buyUrl) { %>
+                <a href="<%= ticket.buyUrl %>" class="btn-cta" target="_blank" rel="noopener">Şimdi Al</a>
+              <% } %>
+            </article>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="empty-state">Bilet yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section" id="section-gallery">
+    <div class="container">
+      <h2 class="section-title">Galeri</h2>
+      <% if (gallery.length) { %>
+        <div class="gallery-grid">
+          <% gallery.forEach(img => { %>
+            <figure class="gallery-item" data-src="<%= img.image %>" data-caption="<%= img.caption || '' %>">
+              <img src="<%= img.image %>" alt="<%= img.caption || 'Galeri görseli' %>">
+              <% if (img.caption) { %><figcaption><%= img.caption %></figcaption><% } %>
+            </figure>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="empty-state">Galeri yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section" id="section-sponsors">
+    <div class="container">
+      <h2 class="section-title">Sponsorlar</h2>
+      <% if (sponsors.length) { %>
+        <div class="sponsors-grid">
+          <% sponsors.forEach(sponsor => { %>
+            <a href="<%= sponsor.url || '#' %>" class="sponsor-item" target="_blank" rel="noopener">
+              <% if (sponsor.logo) { %>
+                <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>">
+              <% } else { %>
+                <span><%= sponsor.name %></span>
+              <% } %>
+            </a>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="empty-state">Sponsorlar yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayarlar — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'settings' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Ayarlar</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <form method="POST" action="/admin/settings" enctype="multipart/form-data">
+      <div class="card">
+        <h2>Logo ve Favicon</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="logo">Logo</label>
+            <% if (settings.logo) { %>
+              <div style="margin-bottom:0.5rem;">
+                <img src="<%= settings.logo %>" alt="Mevcut logo" class="thumb">
+              </div>
+            <% } %>
+            <input type="file" id="logo" name="logo" accept="image/*">
+            <small style="color:#666;">Navbar'da görünür. PNG veya SVG önerilir.</small>
+          </div>
+          <div class="form-group">
+            <label for="favicon">Favicon</label>
+            <% if (settings.favicon) { %>
+              <div style="margin-bottom:0.5rem;">
+                <img src="<%= settings.favicon %>" alt="Mevcut favicon" class="thumb">
+              </div>
+            <% } %>
+            <input type="file" id="favicon" name="favicon" accept="image/png,image/x-icon,image/svg+xml,image/jpeg">
+            <small style="color:#666;">Tarayıcı sekmesinde görünür. 32×32 veya 64×64 px önerilir.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Festival Bilgileri</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="festivalName">Festival Adı</label>
+            <input type="text" id="festivalName" name="festivalName" value="<%= settings.festivalName || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="eventDate">Etkinlik Tarihi</label>
+            <input type="text" id="eventDate" name="eventDate" value="<%= settings.eventDate || '' %>" placeholder="20-24 Aralık 2026">
+          </div>
+          <div class="form-group">
+            <label for="venue">Mekan</label>
+            <input type="text" id="venue" name="venue" value="<%= settings.venue || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="venueCity">Şehir / Konum</label>
+            <input type="text" id="venueCity" name="venueCity" value="<%= settings.venueCity || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Geri Sayım</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="countdownDate">Etkinlik Tarihi</label>
+            <input type="date" id="countdownDate" name="countdownDate" value="<%= settings.countdownDate || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="countdownTime">Etkinlik Saati</label>
+            <input type="time" id="countdownTime" name="countdownTime" value="<%= settings.countdownTime || '' %>">
+          </div>
+        </div>
+        <small style="color:#666;">Ana sayfada hero altında sol tarafta geri sayım aracı olarak gösterilir.</small>
+      </div>
+
+      <div class="card">
+        <h2>İletişim ve Alt Bilgi</h2>
+        <div class="form-group">
+          <label for="contactAddress">Adres</label>
+          <input type="text" id="contactAddress" name="contactAddress" value="<%= settings.contactAddress || '' %>">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactPhone">Telefon</label>
+            <input type="text" id="contactPhone" name="contactPhone" value="<%= settings.contactPhone || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">E-posta</label>
+            <input type="email" id="contactEmail" name="contactEmail" value="<%= settings.contactEmail || '' %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="footerText">Alt Bilgi Metni</label>
+          <textarea id="footerText" name="footerText" rows="3"><%= settings.footerText || '' %></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Sosyal Medya</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="socialFacebook">Facebook</label>
+            <input type="url" id="socialFacebook" name="socialFacebook" value="<%= settings.socialFacebook || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="socialInstagram">Instagram</label>
+            <input type="url" id="socialInstagram" name="socialInstagram" value="<%= settings.socialInstagram || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="socialTwitter">Twitter</label>
+            <input type="url" id="socialTwitter" name="socialTwitter" value="<%= settings.socialTwitter || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="socialYoutube">YouTube</label>
+            <input type="url" id="socialYoutube" name="socialYoutube" value="<%= settings.socialYoutube || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>SEO</h2>
+        <div class="form-group">
+          <label for="metaDescription">Meta Açıklama</label>
+          <textarea id="metaDescription" name="metaDescription" rows="3"><%= settings.metaDescription || '' %></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Ayarları Kaydet</button>
+    </form>
+  </main>
+</body>
+</html>

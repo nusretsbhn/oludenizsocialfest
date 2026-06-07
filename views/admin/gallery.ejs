@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeri — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'gallery' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Galeri</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="card">
+      <h2>Görsel Yükle</h2>
+      <form method="POST" action="/admin/gallery" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="images">Görseller</label>
+            <input type="file" id="images" name="images" accept="image/*" multiple required>
+          </div>
+          <div class="form-group">
+            <label for="caption">Açıklama (tüm görseller için)</label>
+            <input type="text" id="caption" name="caption" placeholder="İsteğe bağlı açıklama">
+          </div>
+          <div class="form-group">
+            <label for="order">Başlangıç Sırası</label>
+            <input type="number" id="order" name="order" value="0">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Yükle</button>
+      </form>
+    </div>
+
+    <% if (gallery.length) { %>
+      <div class="gallery-grid-admin">
+        <% gallery.forEach(img => { %>
+          <div class="gallery-card">
+            <img src="<%= img.image %>" alt="<%= img.caption || 'Galeri' %>">
+            <div class="gallery-card-body">
+              <% if (img.caption) { %><p><%= img.caption %></p><% } %>
+              <p>Sıra: <%= img.order %></p>
+              <form method="POST" action="/admin/gallery/<%= img._id %>/delete" onsubmit="return confirm('Bu görsel silinsin mi?')">
+                <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p style="color:#666;">Henüz galeri görseli yok.</p>
+    <% } %>
+  </main>
+</body>
+</html>

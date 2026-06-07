@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="<%= settings && settings.metaDescription ? settings.metaDescription : 'Elektro müzik festivali' %>">
+  <title><%= settings && settings.festivalName ? settings.festivalName : 'Electrofest' %></title>
+  <% if (settings && settings.favicon) { %>
+    <link rel="icon" href="<%= settings.favicon %>">
+  <% } %>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="logo">
+        <% if (settings && settings.logo) { %>
+          <img src="<%= settings.logo %>" alt="<%= settings.festivalName || 'Electrofest' %>" class="logo-img">
+        <% } else { %>
+          <%= settings && settings.festivalName ? settings.festivalName : 'Electrofest' %>
+        <% } %>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menüyü aç/kapat">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <% if (menuItems && menuItems.length) { %>
+          <% menuItems.forEach(item => { %>
+            <li>
+              <a href="<%= item.href %>"<%= item.isCta ? ' class="btn-cta"' : '' %>><%= item.label %></a>
+            </li>
+          <% }) %>
+        <% } else { %>
+          <li><a href="#section-artists">Sanatçılar</a></li>
+          <li><a href="#section-schedule">Program</a></li>
+          <li><a href="#section-tickets">Biletler</a></li>
+          <li><a href="#section-gallery">Galeri</a></li>
+          <li><a href="#section-sponsors">Sponsorlar</a></li>
+          <li><a href="#section-tickets" class="btn-cta">Bilet Al</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </nav>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banner Yönetimi — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'banner' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Banner Yönetimi</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <form method="POST" action="/admin/banner" enctype="multipart/form-data">
+      <div class="card">
+        <h2>Hero Arka Plan Görseli</h2>
+        <div class="form-group">
+          <% if (settings.heroImage) { %>
+            <div style="margin-bottom:1rem;">
+              <img src="<%= settings.heroImage %>" alt="Mevcut banner" style="max-width:100%;max-height:280px;border-radius:8px;object-fit:cover;">
+            </div>
+          <% } %>
+          <label for="heroImage">Görsel Yükle</label>
+          <input type="file" id="heroImage" name="heroImage" accept="image/*">
+          <small style="color:#666;display:block;margin-top:0.35rem;">Ana sayfa hero bölümünün arka planında görünür. Önerilen: 1920×1080 px.</small>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Hero Metinleri</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="heroTitle1">Başlık 1 (Slayt 1)</label>
+            <input type="text" id="heroTitle1" name="heroTitle1" value="<%= settings.heroTitle1 || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="heroTitle2">Başlık 2 (Slayt 2)</label>
+            <input type="text" id="heroTitle2" name="heroTitle2" value="<%= settings.heroTitle2 || '' %>">
+          </div>
+          <div class="form-group">
+            <label for="heroSubtitle">Alt Başlık</label>
+            <input type="text" id="heroSubtitle" name="heroSubtitle" value="<%= settings.heroSubtitle || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+  </main>
+</body>
+</html>

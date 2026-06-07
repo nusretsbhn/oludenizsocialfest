@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biletler — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'tickets' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Biletler</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="card">
+      <h2>Bilet Ekle</h2>
+      <form method="POST" action="/admin/tickets">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Ad</label>
+            <input type="text" id="name" name="name" required placeholder="Tek Gün">
+          </div>
+          <div class="form-group">
+            <label for="price">Fiyat (₺)</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="buyUrl">Satın Alma Bağlantısı</label>
+            <input type="url" id="buyUrl" name="buyUrl" placeholder="https://">
+          </div>
+          <div class="form-group">
+            <label for="order">Sıra</label>
+            <input type="number" id="order" name="order" value="0">
+          </div>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" id="highlighted" name="highlighted">
+          <label for="highlighted">Önerilen plan</label>
+        </div>
+        <div class="form-group">
+          <label>Özellikler</label>
+          <div class="feature-rows" data-feature-list>
+            <div class="feature-row">
+              <input type="text" name="featureTexts[]" placeholder="Özellik metni">
+              <label class="form-check">
+                <input type="checkbox" name="featureIncluded[]" value="true" checked>
+                Dahil
+              </label>
+              <button type="button" class="btn btn-danger btn-sm" data-remove-feature>Kaldır</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" data-add-feature>Özellik Ekle</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Bilet Ekle</button>
+      </form>
+    </div>
+
+    <% tickets.forEach(ticket => { %>
+      <div class="ticket-card-admin">
+        <form method="POST" action="/admin/tickets/<%= ticket._id %>">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ad</label>
+              <input type="text" name="name" value="<%= ticket.name %>" required>
+            </div>
+            <div class="form-group">
+              <label>Fiyat (₺)</label>
+              <input type="number" name="price" step="0.01" value="<%= ticket.price %>" required>
+            </div>
+            <div class="form-group">
+              <label>Satın Alma Bağlantısı</label>
+              <input type="url" name="buyUrl" value="<%= ticket.buyUrl || '' %>">
+            </div>
+            <div class="form-group">
+              <label>Sıra</label>
+              <input type="number" name="order" value="<%= ticket.order %>">
+            </div>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" name="highlighted" id="hi-<%= ticket._id %>" <%= ticket.highlighted ? 'checked' : '' %>>
+            <label for="hi-<%= ticket._id %>">Önerilen plan</label>
+          </div>
+          <div class="form-group">
+            <label>Özellikler</label>
+            <div class="feature-rows" data-feature-list>
+              <% if (ticket.features && ticket.features.length) { %>
+                <% ticket.features.forEach(f => { %>
+                  <div class="feature-row">
+                    <input type="text" name="featureTexts[]" value="<%= f.text %>">
+                    <label class="form-check">
+                      <input type="checkbox" name="featureIncluded[]" value="true" <%= f.included ? 'checked' : '' %>>
+                      Dahil
+                    </label>
+                    <button type="button" class="btn btn-danger btn-sm" data-remove-feature>Kaldır</button>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <div class="feature-row">
+                  <input type="text" name="featureTexts[]" placeholder="Özellik metni">
+                  <label class="form-check">
+                    <input type="checkbox" name="featureIncluded[]" value="true" checked>
+                    Dahil
+                  </label>
+                  <button type="button" class="btn btn-danger btn-sm" data-remove-feature>Kaldır</button>
+                </div>
+              <% } %>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" data-add-feature>Özellik Ekle</button>
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn btn-primary btn-sm">Kaydet</button>
+          </div>
+        </form>
+        <form method="POST" action="/admin/tickets/<%= ticket._id %>/delete" onsubmit="return confirm('Bu bilet silinsin mi?')" style="margin-top:0.75rem;">
+          <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+        </form>
+      </div>
+    <% }) %>
+
+    <% if (!tickets.length) { %>
+      <p style="color:#666;">Henüz bilet planı yok.</p>
+    <% } %>
+  </main>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

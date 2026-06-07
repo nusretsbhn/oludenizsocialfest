@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menü Yönetimi — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'menu' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Menü Yönetimi</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="card">
+      <h2>Menü Öğesi Ekle</h2>
+      <form method="POST" action="/admin/menu">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="label">Etiket</label>
+            <input type="text" id="label" name="label" required placeholder="Sanatçılar">
+          </div>
+          <div class="form-group">
+            <label for="href">Bağlantı</label>
+            <input type="text" id="href" name="href" required placeholder="#section-artists">
+          </div>
+          <div class="form-group">
+            <label for="order">Sıra</label>
+            <input type="number" id="order" name="order" value="0">
+          </div>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" id="isCta" name="isCta">
+          <label for="isCta">CTA butonu (vurgulu buton olarak göster)</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Ekle</button>
+      </form>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Etiket</th>
+          <th>Bağlantı</th>
+          <th>Sıra</th>
+          <th>CTA</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% menuItems.forEach(item => { %>
+          <tr>
+            <td><%= item.label %></td>
+            <td><code><%= item.href %></code></td>
+            <td><%= item.order %></td>
+            <td><%= item.isCta ? 'Evet' : 'Hayır' %></td>
+            <td class="actions">
+              <button type="button" class="btn btn-secondary btn-sm" data-edit-toggle="edit-menu-<%= item._id %>">Düzenle</button>
+              <form method="POST" action="/admin/menu/<%= item._id %>/delete" onsubmit="return confirm('Bu menü öğesi silinsin mi?')">
+                <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+              </form>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="5" style="padding:0;border:none;">
+              <form id="edit-menu-<%= item._id %>" class="edit-form" method="POST" action="/admin/menu/<%= item._id %>">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Etiket</label>
+                    <input type="text" name="label" value="<%= item.label %>" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Bağlantı</label>
+                    <input type="text" name="href" value="<%= item.href %>" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Sıra</label>
+                    <input type="number" name="order" value="<%= item.order %>">
+                  </div>
+                </div>
+                <div class="form-group form-check">
+                  <input type="checkbox" name="isCta" id="cta-<%= item._id %>" <%= item.isCta ? 'checked' : '' %>>
+                  <label for="cta-<%= item._id %>">CTA butonu</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Kaydet</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!menuItems.length) { %>
+          <tr><td colspan="5" style="text-align:center;color:#666;">Henüz menü öğesi yok. Site varsayılan menüyü gösterir.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <p style="color:#666;margin-top:1rem;font-size:0.9rem;">
+      Sayfa içi bağlantılar için <code>#section-artists</code> gibi anchor kullanın.
+      Mevcut bölümler: <code>#section-artists</code>, <code>#section-schedule</code>, <code>#section-tickets</code>, <code>#section-gallery</code>, <code>#section-sponsors</code>
+    </p>
+  </main>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

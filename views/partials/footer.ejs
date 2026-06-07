@@ -1,0 +1,49 @@
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h3><%= settings && settings.festivalName ? settings.festivalName : 'Electrofest' %></h3>
+        <p><%= settings && settings.footerText ? settings.footerText : 'Eşsiz bir elektro müzik deneyimi.' %></p>
+      </div>
+      <div class="footer-col">
+        <h4>Hızlı Bağlantılar</h4>
+        <ul>
+          <li><a href="#section-artists">Sanatçılar</a></li>
+          <li><a href="#section-schedule">Program</a></li>
+          <li><a href="#section-tickets">Biletler</a></li>
+          <li><a href="#section-gallery">Galeri</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>İletişim</h4>
+        <% if (settings && settings.contactAddress) { %><p><%= settings.contactAddress %></p><% } %>
+        <% if (settings && settings.contactPhone) { %><p><%= settings.contactPhone %></p><% } %>
+        <% if (settings && settings.contactEmail) { %><p><a href="mailto:<%= settings.contactEmail %>"><%= settings.contactEmail %></a></p><% } %>
+      </div>
+      <div class="footer-col">
+        <h4>Bülten</h4>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" placeholder="E-posta adresiniz" aria-label="E-posta">
+          <button type="submit" class="btn-cta">Abone Ol</button>
+        </form>
+        <div class="social-links">
+          <% if (settings && settings.socialFacebook) { %><a href="<%= settings.socialFacebook %>" target="_blank" rel="noopener">Facebook</a><% } %>
+          <% if (settings && settings.socialInstagram) { %><a href="<%= settings.socialInstagram %>" target="_blank" rel="noopener">Instagram</a><% } %>
+          <% if (settings && settings.socialTwitter) { %><a href="<%= settings.socialTwitter %>" target="_blank" rel="noopener">Twitter</a><% } %>
+          <% if (settings && settings.socialYoutube) { %><a href="<%= settings.socialYoutube %>" target="_blank" rel="noopener">YouTube</a><% } %>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <%= new Date().getFullYear() %> <%= settings && settings.festivalName ? settings.festivalName : 'Electrofest' %>. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox-close" id="lightboxClose" aria-label="Kapat">&times;</button>
+    <img src="" alt="" id="lightboxImg">
+    <p id="lightboxCaption"></p>
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontrol Paneli — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'dashboard' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Kontrol Paneli</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number"><%= stats.artists %></div>
+        <div class="stat-label">Sanatçı</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= stats.schedule %></div>
+        <div class="stat-label">Program Öğesi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= stats.tickets %></div>
+        <div class="stat-label">Bilet Planı</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number"><%= stats.gallery %></div>
+        <div class="stat-label">Galeri Görseli</div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

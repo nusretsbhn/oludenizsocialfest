@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sponsorlar — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'sponsors' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Sponsorlar</h1>
+    </div>
+
+    <% if (success) { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="card">
+      <h2>Sponsor Ekle</h2>
+      <form method="POST" action="/admin/sponsors" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Ad</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="url">Web Sitesi</label>
+            <input type="url" id="url" name="url" placeholder="https://">
+          </div>
+          <div class="form-group">
+            <label for="order">Sıra</label>
+            <input type="number" id="order" name="order" value="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="logo">Logo</label>
+          <input type="file" id="logo" name="logo" accept="image/*">
+        </div>
+        <button type="submit" class="btn btn-primary">Sponsor Ekle</button>
+      </form>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Ad</th>
+          <th>Web Sitesi</th>
+          <th>Sıra</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% sponsors.forEach(sponsor => { %>
+          <tr>
+            <td>
+              <% if (sponsor.logo) { %>
+                <img src="<%= sponsor.logo %>" alt="<%= sponsor.name %>" class="thumb">
+              <% } else { %>
+                <div class="thumb-placeholder"></div>
+              <% } %>
+            </td>
+            <td><%= sponsor.name %></td>
+            <td><% if (sponsor.url) { %><a href="<%= sponsor.url %>" target="_blank"><%= sponsor.url %></a><% } else { %>—<% } %></td>
+            <td><%= sponsor.order %></td>
+            <td>
+              <form method="POST" action="/admin/sponsors/<%= sponsor._id %>/delete" onsubmit="return confirm('Bu sponsor silinsin mi?')">
+                <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!sponsors.length) { %>
+          <tr><td colspan="5" style="text-align:center;color:#666;">Henüz sponsor yok.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
