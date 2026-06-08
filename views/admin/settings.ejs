@@ -45,6 +45,22 @@
       </div>
 
       <div class="card">
+        <h2>Site Görünümü</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="siteTitle">Site Başlığı (Tarayıcı Sekmesi)</label>
+            <input type="text" id="siteTitle" name="siteTitle" value="<%= settings.siteTitle || settings.festivalName || '' %>" placeholder="Ölüdeniz Social Fest">
+            <small style="color:#666;">Tarayıcı sekmesinde görünen başlık.</small>
+          </div>
+          <div class="form-group">
+            <label for="footerText">Footer Slogan Metni</label>
+            <input type="text" id="footerText" name="footerText" value="<%= settings.footerText || '' %>" placeholder="Eşsiz bir elektro müzik deneyimi.">
+            <small style="color:#666;">Footer'da festival adının altında görünen kısa metin.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <h2>Festival Bilgileri</h2>
         <div class="form-row">
           <div class="form-group">
@@ -96,10 +112,6 @@
             <label for="contactEmail">E-posta</label>
             <input type="email" id="contactEmail" name="contactEmail" value="<%= settings.contactEmail || '' %>">
           </div>
-        </div>
-        <div class="form-group">
-          <label for="footerText">Alt Bilgi Metni</label>
-          <textarea id="footerText" name="footerText" rows="3"><%= settings.footerText || '' %></textarea>
         </div>
       </div>
 

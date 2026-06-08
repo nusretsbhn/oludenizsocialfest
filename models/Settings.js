@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const settingsSchema = new mongoose.Schema(
   {
     festivalName: String,
+    siteTitle: String,
     logo: String,
     favicon: String,
     heroImage: String,

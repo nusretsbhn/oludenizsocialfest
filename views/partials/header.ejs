@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="<%= settings && settings.metaDescription ? settings.metaDescription : 'Elektro müzik festivali' %>">
-  <title><%= settings && settings.festivalName ? settings.festivalName : 'Electrofest' %></title>
+  <title><%= settings && (settings.siteTitle || settings.festivalName) ? (settings.siteTitle || settings.festivalName) : 'Electrofest' %></title>
   <% if (settings && settings.favicon) { %>
     <link rel="icon" href="<%= settings.favicon %>">
   <% } %>

@@ -193,6 +193,44 @@
     </div>
   </section>
 
+  <section class="section section-videos" id="section-videos">
+    <div class="container">
+      <h2 class="section-title">Video Feed</h2>
+      <p class="video-feed-subtitle">Festivalden anlar — kaydır ve keşfet</p>
+      <% if (feedVideos.length) { %>
+        <div class="video-feed-wrap">
+          <button class="video-feed-nav video-feed-nav--prev" id="videoFeedPrev" aria-label="Önceki">‹</button>
+          <div class="video-feed" id="videoFeed">
+            <% feedVideos.forEach((item, i) => { %>
+              <article class="video-feed-card" data-index="<%= i %>">
+                <div class="video-feed-frame">
+                  <video
+                    src="<%= item.video %>"
+                    playsinline
+                    loop
+                    muted
+                    preload="metadata"
+                    poster=""
+                  ></video>
+                  <button class="video-feed-play" type="button" aria-label="Oynat">
+                    <span class="video-feed-play-icon">▶</span>
+                  </button>
+                  <div class="video-feed-gradient"></div>
+                </div>
+                <% if (item.caption) { %>
+                  <p class="video-feed-caption"><%= item.caption %></p>
+                <% } %>
+              </article>
+            <% }) %>
+          </div>
+          <button class="video-feed-nav video-feed-nav--next" id="videoFeedNext" aria-label="Sonraki">›</button>
+        </div>
+      <% } else { %>
+        <p class="empty-state">Videolar yakında eklenecek.</p>
+      <% } %>
+    </div>
+  </section>
+
   <section class="section" id="section-sponsors">
     <div class="container">
       <h2 class="section-title">Sponsorlar</h2>

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCountdown();
   initScheduleTabs();
   initGalleryLightbox();
+  initVideoFeed();
 });
 
 function initNavToggle() {
@@ -114,6 +115,59 @@ function initScheduleTabs() {
       if (panel) panel.classList.add('active');
     });
   });
+}
+
+function initVideoFeed() {
+  const feed = document.getElementById('videoFeed');
+  if (!feed) return;
+
+  const cards = feed.querySelectorAll('.video-feed-card');
+  const prevBtn = document.getElementById('videoFeedPrev');
+  const nextBtn = document.getElementById('videoFeedNext');
+
+  function pauseAll(except) {
+    cards.forEach((card) => {
+      const video = card.querySelector('video');
+      if (video && video !== except) {
+        video.pause();
+        card.classList.remove('is-playing');
+      }
+    });
+  }
+
+  cards.forEach((card) => {
+    const video = card.querySelector('video');
+    const playBtn = card.querySelector('.video-feed-play');
+    if (!video || !playBtn) return;
+
+    playBtn.addEventListener('click', () => {
+      if (video.paused) {
+        pauseAll(video);
+        video.muted = false;
+        video.play();
+        card.classList.add('is-playing');
+      } else {
+        video.pause();
+        card.classList.remove('is-playing');
+      }
+    });
+
+    video.addEventListener('click', () => playBtn.click());
+    video.addEventListener('ended', () => card.classList.remove('is-playing'));
+  });
+
+  const scrollAmount = () => feed.querySelector('.video-feed-card')?.offsetWidth || 300;
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      feed.scrollBy({ left: -scrollAmount() - 20, behavior: 'smooth' });
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      feed.scrollBy({ left: scrollAmount() + 20, behavior: 'smooth' });
+    });
+  }
 }
 
 function initGalleryLightbox() {

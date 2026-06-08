@@ -7,6 +7,7 @@ const GalleryImage = require('../models/GalleryImage');
 const Sponsor = require('../models/Sponsor');
 const Settings = require('../models/Settings');
 const MenuItem = require('../models/MenuItem');
+const FeedVideo = require('../models/FeedVideo');
 
 const router = express.Router();
 
@@ -20,13 +21,14 @@ const defaultSettings = {
   venueCity: 'Ölüdeniz, Muğla',
   countdownDate: '2026-12-20',
   countdownTime: '20:00',
+  siteTitle: 'Electrofest',
   footerText: 'Eşsiz bir elektro müzik deneyimi.',
   metaDescription: 'Electrofest — elektro müzik festivali',
 };
 
 router.get('/', async (req, res) => {
   try {
-    const [settings, menuItems, artists, scheduleItems, tickets, gallery, sponsors] =
+    const [settings, menuItems, artists, scheduleItems, tickets, gallery, feedVideos, sponsors] =
       await Promise.all([
         Settings.findOne(),
         MenuItem.find().sort({ order: 1 }),
@@ -34,6 +36,7 @@ router.get('/', async (req, res) => {
         ScheduleItem.find().sort({ day: 1, order: 1 }),
         Ticket.find().sort({ order: 1 }),
         GalleryImage.find().sort({ order: 1 }),
+        FeedVideo.find().sort({ order: 1 }),
         Sponsor.find().sort({ order: 1 }),
       ]);
 
@@ -52,6 +55,7 @@ router.get('/', async (req, res) => {
       scheduleByDay,
       tickets,
       gallery,
+      feedVideos,
       sponsors,
     });
   } catch (err) {

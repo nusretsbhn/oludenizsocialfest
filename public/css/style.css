@@ -553,6 +553,168 @@ img {
   font-size: 0.85rem;
 }
 
+.section-videos {
+  background: linear-gradient(180deg, var(--bg) 0%, #120810 50%, var(--bg) 100%);
+  overflow: hidden;
+}
+
+.video-feed-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin: -2rem 0 2.5rem;
+  font-size: 1rem;
+}
+
+.video-feed-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.video-feed {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 1rem 0.5rem 2rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-secondary);
+  flex: 1;
+}
+
+.video-feed::-webkit-scrollbar {
+  height: 6px;
+}
+
+.video-feed::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.video-feed-card {
+  flex: 0 0 auto;
+  width: min(280px, 75vw);
+  scroll-snap-align: center;
+}
+
+.video-feed-frame {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+.video-feed-card:hover .video-feed-frame,
+.video-feed-card.is-playing .video-feed-frame {
+  border-color: var(--accent);
+  box-shadow: 0 12px 40px rgba(233, 30, 140, 0.25);
+  transform: translateY(-4px);
+}
+
+.video-feed-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-feed-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.75) 0%,
+    transparent 40%,
+    transparent 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.video-feed-card.is-playing .video-feed-gradient {
+  opacity: 0.5;
+}
+
+.video-feed-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: rgba(233, 30, 140, 0.85);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, opacity 0.3s, background 0.2s;
+  z-index: 2;
+}
+
+.video-feed-play:hover {
+  background: var(--accent-light);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.video-feed-play-icon {
+  font-size: 1.25rem;
+  margin-left: 3px;
+}
+
+.video-feed-card.is-playing .video-feed-play {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-feed-caption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding: 0 0.5rem;
+}
+
+.video-feed-nav {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.video-feed-nav:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .video-feed-nav {
+    display: none;
+  }
+
+  .video-feed-card {
+    width: min(240px, 82vw);
+  }
+}
+
 .sponsors-grid {
   display: flex;
   flex-wrap: wrap;

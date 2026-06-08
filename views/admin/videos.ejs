@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Feed — Electrofest Yönetim</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+  <%- include('../partials/admin-sidebar', { active: 'videos' }) %>
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Video Feed</h1>
+    </div>
+
+    <% if (success === '1') { %>
+      <div class="alert-success">Değişiklikler başarıyla kaydedildi.</div>
+    <% } %>
+
+    <div class="card">
+      <h2>Video Yükle</h2>
+      <p style="color:#666;margin-bottom:1rem;font-size:0.9rem;">Dikey (9:16) format önerilir. Maks. 100 MB.</p>
+      <form method="POST" action="/admin/videos" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="video">Video Dosyası</label>
+            <input type="file" id="video" name="video" accept="video/*" required>
+          </div>
+          <div class="form-group">
+            <label for="caption">Açıklama</label>
+            <input type="text" id="caption" name="caption" placeholder="İsteğe bağlı">
+          </div>
+          <div class="form-group">
+            <label for="order">Sıra</label>
+            <input type="number" id="order" name="order" value="0">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Yükle</button>
+      </form>
+    </div>
+
+    <% if (videos.length) { %>
+      <div class="video-admin-grid">
+        <% videos.forEach(item => { %>
+          <div class="video-admin-card">
+            <video src="<%= item.video %>" muted playsinline preload="metadata"></video>
+            <div class="video-admin-card-body">
+              <% if (item.caption) { %><p><%= item.caption %></p><% } %>
+              <p>Sıra: <%= item.order %></p>
+              <form method="POST" action="/admin/videos/<%= item._id %>/delete" onsubmit="return confirm('Bu video silinsin mi?')">
+                <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p style="color:#666;">Henüz video yok. Galeri altında feed olarak görünecek.</p>
+    <% } %>
+  </main>
+</body>
+</html>

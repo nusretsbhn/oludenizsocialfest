@@ -12,6 +12,7 @@ const GalleryImage = require('../models/GalleryImage');
 const Sponsor = require('../models/Sponsor');
 const Settings = require('../models/Settings');
 const MenuItem = require('../models/MenuItem');
+const FeedVideo = require('../models/FeedVideo');
 
 const router = express.Router();
 
@@ -28,6 +29,18 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+const videoUpload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Sadece video dosyaları yüklenebilir'));
+    }
+  },
+});
 
 function zipFeatures(texts, included) {
   if (!texts) return [];
@@ -331,6 +344,49 @@ router.post('/gallery/:id/delete', requireAuth, async (req, res) => {
     const image = await GalleryImage.findByIdAndDelete(req.params.id);
     if (image) removeUpload(image.image);
     res.redirect('/admin/gallery?success=1');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Sunucu hatası');
+  }
+});
+
+router.get('/videos', requireAuth, async (req, res) => {
+  try {
+    const videos = await FeedVideo.find().sort({ order: 1 });
+    res.render('admin/videos', { videos, success: req.query.success });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Sunucu hatası');
+  }
+});
+
+router.post(
+  '/videos',
+  requireAuth,
+  videoUpload.single('video'),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.redirect('/admin/videos?success=0');
+      }
+      await FeedVideo.create({
+        video: `/uploads/${req.file.filename}`,
+        caption: req.body.caption || '',
+        order: Number(req.body.order) || 0,
+      });
+      res.redirect('/admin/videos?success=1');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Sunucu hatası');
+    }
+  }
+);
+
+router.post('/videos/:id/delete', requireAuth, async (req, res) => {
+  try {
+    const item = await FeedVideo.findByIdAndDelete(req.params.id);
+    if (item) removeUpload(item.video);
+    res.redirect('/admin/videos?success=1');
   } catch (err) {
     console.error(err);
     res.status(500).send('Sunucu hatası');
