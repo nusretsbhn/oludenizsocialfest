@@ -381,35 +381,89 @@ img {
   font-size: 0.9rem;
 }
 
-.tickets-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  align-items: center;
+.tickets-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin: -2rem 0 1.75rem;
+  font-size: 0.95rem;
 }
 
-.tickets-grid--centered {
+.tickets-wrap {
+  position: relative;
   display: flex;
-  justify-content: center;
+  align-items: stretch;
+  gap: 0.5rem;
 }
 
-.ticket-card--single {
-  max-width: 420px;
-  width: 100%;
+.tickets-track {
+  display: flex;
+  gap: 1.1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.75rem 0.25rem 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-secondary);
+  flex: 1;
+  touch-action: pan-x;
+}
+
+.tickets-track::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tickets-track::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
 }
 
 .ticket-card {
+  flex: 0 0 auto;
+  width: min(320px, 82vw);
+  scroll-snap-align: center;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 2rem;
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-card h3 {
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.ticket-card .btn-cta {
+  margin-top: auto;
 }
 
 .ticket-card--highlighted {
   border-color: var(--accent);
-  box-shadow: 0 0 30px rgba(233, 30, 140, 0.3);
-  transform: scale(1.05);
+  box-shadow: 0 0 28px rgba(233, 30, 140, 0.28);
+}
+
+.tickets-nav {
+  flex-shrink: 0;
+  align-self: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.tickets-nav:hover {
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .ticket-price {
@@ -837,14 +891,6 @@ img {
 }
 
 @media (max-width: 992px) {
-  .tickets-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .ticket-card--highlighted {
-    transform: none;
-  }
-
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -855,6 +901,20 @@ img {
 }
 
 @media (max-width: 768px) {
+  .tickets-nav {
+    display: none;
+  }
+
+  .ticket-card {
+    width: min(280px, 78vw);
+  }
+
+  .tickets-track {
+    margin: 0 -0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .nav-toggle {
     display: flex;
   }

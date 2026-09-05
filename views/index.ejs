@@ -102,26 +102,33 @@
   <section class="section" id="section-tickets">
     <div class="container">
       <h2 class="section-title">Biletler</h2>
+      <% if (tickets.length > 1) { %>
+        <p class="tickets-subtitle">Kaydırarak paketleri incele</p>
+      <% } %>
       <% if (tickets.length) { %>
-        <div class="tickets-grid tickets-grid--centered">
-          <% tickets.forEach(ticket => { %>
-            <article class="ticket-card ticket-card--single<%= ticket.highlighted ? ' ticket-card--highlighted' : '' %>">
-              <h3><%= ticket.name %></h3>
-              <p class="ticket-price"><%= (ticket.price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %> ₺</p>
-              <% if (ticket.features && ticket.features.length) { %>
-                <ul class="ticket-features">
-                  <% ticket.features.forEach(f => { %>
-                    <li class="<%= f.included ? 'included' : 'excluded' %>">
-                      <span><%= f.included ? '✓' : '✗' %></span> <%= f.text %>
-                    </li>
-                  <% }) %>
-                </ul>
-              <% } %>
-              <% if (ticket.buyUrl) { %>
-                <a href="<%= ticket.buyUrl %>" class="btn-cta" target="_blank" rel="noopener">Şimdi Al</a>
-              <% } %>
-            </article>
-          <% }) %>
+        <div class="tickets-wrap">
+          <button class="tickets-nav tickets-nav--prev" id="ticketsPrev" type="button" aria-label="Önceki bilet">‹</button>
+          <div class="tickets-track" id="ticketsTrack">
+            <% tickets.forEach(ticket => { %>
+              <article class="ticket-card<%= ticket.highlighted ? ' ticket-card--highlighted' : '' %>">
+                <h3><%= ticket.name %></h3>
+                <p class="ticket-price"><%= (ticket.price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %> ₺</p>
+                <% if (ticket.features && ticket.features.length) { %>
+                  <ul class="ticket-features">
+                    <% ticket.features.forEach(f => { %>
+                      <li class="<%= f.included ? 'included' : 'excluded' %>">
+                        <span><%= f.included ? '✓' : '✗' %></span> <%= f.text %>
+                      </li>
+                    <% }) %>
+                  </ul>
+                <% } %>
+                <% if (ticket.buyUrl) { %>
+                  <a href="<%= ticket.buyUrl %>" class="btn-cta" target="_blank" rel="noopener">Şimdi Al</a>
+                <% } %>
+              </article>
+            <% }) %>
+          </div>
+          <button class="tickets-nav tickets-nav--next" id="ticketsNext" type="button" aria-label="Sonraki bilet">›</button>
         </div>
       <% } else { %>
         <p class="empty-state">Bilet yakında eklenecek.</p>

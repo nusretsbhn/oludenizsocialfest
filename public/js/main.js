@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScheduleTabs();
   initGalleryLightbox();
   initVideoFeed();
+  initTicketsCarousel();
 });
 
 function initNavToggle() {
@@ -166,6 +167,32 @@ function initVideoFeed() {
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
       feed.scrollBy({ left: scrollAmount() + 20, behavior: 'smooth' });
+    });
+  }
+}
+
+function initTicketsCarousel() {
+  const track = document.getElementById('ticketsTrack');
+  if (!track) return;
+
+  const prevBtn = document.getElementById('ticketsPrev');
+  const nextBtn = document.getElementById('ticketsNext');
+  const scrollAmount = () => {
+    const card = track.querySelector('.ticket-card');
+    if (!card) return 300;
+    const styles = window.getComputedStyle(track);
+    const gap = parseFloat(styles.columnGap || styles.gap) || 16;
+    return card.offsetWidth + gap;
+  };
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      track.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
     });
   }
 }
