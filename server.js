@@ -15,6 +15,10 @@ const indexRouter = require('./routes/index');
 const { router: adminRouter, initAdmin } = require('./routes/admin');
 
 const app = express();
+const PORT = Number(process.env.PORT) || 3000;
+
+let ready = false;
+let bootError = null;
 
 function requireEnv(name) {
   let value = process.env[name];
@@ -29,7 +33,6 @@ function requireEnv(name) {
 
 function normalizeMongoUri(uri) {
   let value = uri.trim().replace(/^['"]|['"]$/g, '');
-  // Fix common paste mistake: MONGODB_URI=mongodb://...
   if (value.startsWith('MONGODB_URI=')) {
     value = value.slice('MONGODB_URI='.length);
   }
@@ -43,14 +46,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = Number(process.env.PORT) || 3000;
+app.get('/health', (req, res) => {
+  if (ready) {
+    return res.status(200).send('ok');
+  }
+  res.status(503).send(bootError || 'starting');
+});
 
-async function start() {
+async function boot() {
   try {
     console.log('Starting server...');
     console.log(`Node ${process.version}, PORT=${PORT}`);
+    console.log('Env keys:', Object.keys(process.env).filter((k) =>
+      ['PORT', 'MONGODB_URI', 'SESSION_SECRET', 'ADMIN_USER', 'ADMIN_PASS'].includes(k)
+    ).join(', ') || '(none of expected keys)');
 
     let mongoUri = normalizeMongoUri(requireEnv('MONGODB_URI'));
+    console.log('Mongo host preview:', mongoUri.replace(/\/\/.*@/, '//***@').slice(0, 80));
 
     if (
       !mongoUri.startsWith('mongodb://') &&
@@ -67,7 +79,7 @@ async function start() {
 
     console.log('Connecting to MongoDB...');
     await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 15000,
+      serverSelectionTimeoutMS: 20000,
     });
     console.log('MongoDB connected');
 
@@ -89,10 +101,6 @@ async function start() {
     await initAdmin();
     console.log('Admin ready');
 
-    app.get('/health', (req, res) => {
-      res.status(200).send('ok');
-    });
-
     app.use('/', indexRouter);
     app.use('/admin', adminRouter);
 
@@ -100,13 +108,15 @@ async function start() {
       res.status(404).send('Sayfa bulunamadı');
     });
 
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on http://0.0.0.0:${PORT}`);
-    });
+    ready = true;
+    console.log('App ready');
   } catch (err) {
-    console.error('Failed to start server:', err.message);
-    process.exit(1);
+    bootError = err.message;
+    console.error('Failed to boot app:', err.message);
   }
 }
 
-start();
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`HTTP listening on http://0.0.0.0:${PORT}`);
+  boot();
+});
