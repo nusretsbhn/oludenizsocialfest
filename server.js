@@ -17,9 +17,21 @@ const { router: adminRouter, initAdmin } = require('./routes/admin');
 const app = express();
 
 function requireEnv(name) {
-  const value = process.env[name]?.trim();
+  let value = process.env[name];
+  if (typeof value === 'string') {
+    value = value.trim().replace(/^['"]|['"]$/g, '');
+  }
   if (!value) {
     throw new Error(`Eksik ortam değişkeni: ${name}`);
+  }
+  return value;
+}
+
+function normalizeMongoUri(uri) {
+  let value = uri.trim().replace(/^['"]|['"]$/g, '');
+  // Fix common paste mistake: MONGODB_URI=mongodb://...
+  if (value.startsWith('MONGODB_URI=')) {
+    value = value.slice('MONGODB_URI='.length);
   }
   return value;
 }
@@ -31,18 +43,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function start() {
   try {
-    const mongoUri = requireEnv('MONGODB_URI');
+    console.log('Starting server...');
+    console.log(`Node ${process.version}, PORT=${PORT}`);
+
+    let mongoUri = normalizeMongoUri(requireEnv('MONGODB_URI'));
 
     if (
       !mongoUri.startsWith('mongodb://') &&
       !mongoUri.startsWith('mongodb+srv://')
     ) {
       throw new Error(
-        `MONGODB_URI geçersiz. "mongodb://" ile başlamalı. Şu an: "${mongoUri.slice(0, 30)}..."`
+        `MONGODB_URI geçersiz. "mongodb://" ile başlamalı. Şu an: "${mongoUri.slice(0, 40)}"`
       );
     }
 
@@ -50,7 +65,10 @@ async function start() {
     requireEnv('ADMIN_USER');
     requireEnv('ADMIN_PASS');
 
-    await mongoose.connect(mongoUri);
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 15000,
+    });
     console.log('MongoDB connected');
 
     app.use(
@@ -69,6 +87,7 @@ async function start() {
     );
 
     await initAdmin();
+    console.log('Admin ready');
 
     app.get('/health', (req, res) => {
       res.status(200).send('ok');
