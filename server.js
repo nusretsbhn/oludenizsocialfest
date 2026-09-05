@@ -1,34 +1,122 @@
-console.log('=== BOOT ===');
-console.log('time:', new Date().toISOString());
-console.log('node:', process.version);
-console.log('cwd:', process.cwd());
-console.log('PORT raw:', JSON.stringify(process.env.PORT));
+const nodeCrypto = require('crypto');
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = nodeCrypto.webcrypto;
+}
 
+require('dotenv').config();
+
+const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const { MongoStore } = require('connect-mongo');
+const path = require('path');
+
+const indexRouter = require('./routes/index');
+const { router: adminRouter, initAdmin } = require('./routes/admin');
+
+const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-const http = require('http');
+let ready = false;
+let bootError = null;
 
-const server = http.createServer((req, res) => {
-  console.log('request:', req.method, req.url);
-  if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    return res.end('ok');
+function requireEnv(name) {
+  let value = process.env[name];
+  if (typeof value === 'string') {
+    value = value.trim().replace(/^['"]|['"]$/g, '');
   }
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(`<!doctype html><html><body style="font-family:sans-serif;background:#0a0a0a;color:#fff;padding:40px">
-    <h1 style="color:#e91e8c">Electrofest container AYAKTA</h1>
-    <p>Node ${process.version}</p>
-    <p>PORT ${PORT}</p>
-    <p>Zaman: ${new Date().toISOString()}</p>
-    <p>Bu ekranı görüyorsan Easypanel container çalışıyor. Sonraki adımda uygulamayı geri yükleyeceğiz.</p>
-  </body></html>`);
+  if (!value) {
+    throw new Error(`Eksik ortam değişkeni: ${name}`);
+  }
+  return value;
+}
+
+function normalizeMongoUri(uri) {
+  let value = uri.trim().replace(/^['"]|['"]$/g, '');
+  if (value.startsWith('MONGODB_URI=')) {
+    value = value.slice('MONGODB_URI='.length);
+  }
+  return value;
+}
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/health', (req, res) => {
+  if (ready) {
+    return res.status(200).send('ok');
+  }
+  res.status(503).send(bootError || 'starting');
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`LISTEN OK on 0.0.0.0:${PORT}`);
-});
+async function boot() {
+  try {
+    console.log('Starting server...');
+    console.log(`Node ${process.version}, PORT=${PORT}`);
+    console.log('Env keys:', Object.keys(process.env).filter((k) =>
+      ['PORT', 'MONGODB_URI', 'SESSION_SECRET', 'ADMIN_USER', 'ADMIN_PASS'].includes(k)
+    ).join(', ') || '(none of expected keys)');
 
-process.on('SIGTERM', () => {
-  console.log('got SIGTERM');
-  server.close(() => process.exit(0));
+    let mongoUri = normalizeMongoUri(requireEnv('MONGODB_URI'));
+    console.log('Mongo host preview:', mongoUri.replace(/\/\/.*@/, '//***@').slice(0, 80));
+
+    if (
+      !mongoUri.startsWith('mongodb://') &&
+      !mongoUri.startsWith('mongodb+srv://')
+    ) {
+      throw new Error(
+        `MONGODB_URI geçersiz. "mongodb://" ile başlamalı. Şu an: "${mongoUri.slice(0, 40)}"`
+      );
+    }
+
+    requireEnv('SESSION_SECRET');
+    requireEnv('ADMIN_USER');
+    requireEnv('ADMIN_PASS');
+
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 20000,
+    });
+    console.log('MongoDB connected');
+
+    app.use(
+      session({
+        secret: process.env.SESSION_SECRET.trim(),
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+          client: mongoose.connection.getClient(),
+          dbName: 'electrofest',
+        }),
+        cookie: {
+          maxAge: 1000 * 60 * 60 * 24,
+        },
+      })
+    );
+
+    await initAdmin();
+    console.log('Admin ready');
+
+    app.use('/', indexRouter);
+    app.use('/admin', adminRouter);
+
+    app.use((req, res) => {
+      res.status(404).send('Sayfa bulunamadı');
+    });
+
+    ready = true;
+    console.log('App ready');
+  } catch (err) {
+    bootError = err.message;
+    console.error('Failed to boot app:', err.message);
+  }
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`HTTP listening on http://0.0.0.0:${PORT}`);
+  boot();
 });

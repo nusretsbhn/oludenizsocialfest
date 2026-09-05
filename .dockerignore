@@ -8,3 +8,4 @@ public/uploads/*
 npm-debug.log
 *.md
 .DS_Store
+server.minimal.js
