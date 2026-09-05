@@ -84,10 +84,10 @@ async function seed() {
   });
 
   await MenuItem.insertMany([
-    { label: 'Sanatçılar', href: '#section-artists', order: 1, isCta: false },
-    { label: 'Program', href: '#section-schedule', order: 2, isCta: false },
-    { label: 'Biletler', href: '#section-tickets', order: 3, isCta: false },
-    { label: 'Galeri', href: '#section-gallery', order: 4, isCta: false },
+    { label: 'Program', href: '#section-schedule', order: 1, isCta: false },
+    { label: 'Biletler', href: '#section-tickets', order: 2, isCta: false },
+    { label: 'Galeri', href: '#section-gallery', order: 3, isCta: false },
+    { label: 'Videolar', href: '#section-videos', order: 4, isCta: false },
     { label: 'Sponsorlar', href: '#section-sponsors', order: 5, isCta: false },
     { label: 'Bilet Al', href: '#section-tickets', order: 6, isCta: true },
   ]);

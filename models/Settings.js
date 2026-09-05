@@ -17,6 +17,7 @@ const settingsSchema = new mongoose.Schema(
     venueCity: String,
     contactAddress: String,
     contactPhone: String,
+    contactWhatsapp: String,
     contactEmail: String,
     footerText: String,
     socialFacebook: String,

@@ -1,6 +1,5 @@
 const express = require('express');
 
-const Artist = require('../models/Artist');
 const ScheduleItem = require('../models/ScheduleItem');
 const Ticket = require('../models/Ticket');
 const GalleryImage = require('../models/GalleryImage');
@@ -28,11 +27,10 @@ const defaultSettings = {
 
 router.get('/', async (req, res) => {
   try {
-    const [settings, menuItems, artists, scheduleItems, tickets, gallery, feedVideos, sponsors] =
+    const [settings, menuItems, scheduleItems, tickets, gallery, feedVideos, sponsors] =
       await Promise.all([
         Settings.findOne(),
         MenuItem.find().sort({ order: 1 }),
-        Artist.find().sort({ order: 1 }),
         ScheduleItem.find().sort({ day: 1, order: 1 }),
         Ticket.find().sort({ order: 1 }),
         GalleryImage.find().sort({ order: 1 }),
@@ -51,7 +49,6 @@ router.get('/', async (req, res) => {
         ? { ...defaultSettings, ...settings.toObject() }
         : defaultSettings,
       menuItems,
-      artists,
       scheduleByDay,
       tickets,
       gallery,

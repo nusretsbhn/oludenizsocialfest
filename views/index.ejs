@@ -63,52 +63,6 @@
     </div>
   </section>
 
-  <section class="section" id="section-artists">
-    <div class="container">
-      <h2 class="section-title">Sanatçılar</h2>
-      <% const featuredArtists = artists.filter(a => a.featured); %>
-      <% const otherArtists = artists.filter(a => !a.featured); %>
-
-      <% if (featuredArtists.length) { %>
-        <div class="artists-featured">
-          <% featuredArtists.forEach(artist => { %>
-            <article class="artist-card artist-card--featured">
-              <% if (artist.image) { %>
-                <img src="<%= artist.image %>" alt="<%= artist.name %>">
-              <% } else { %>
-                <div class="artist-placeholder"></div>
-              <% } %>
-              <div class="artist-info">
-                <h3><%= artist.name %></h3>
-                <% if (artist.role) { %><p><%= artist.role %></p><% } %>
-              </div>
-            </article>
-          <% }) %>
-        </div>
-      <% } %>
-
-      <% if (otherArtists.length) { %>
-        <ul class="artists-list">
-          <% otherArtists.forEach(artist => { %>
-            <li class="artist-list-item">
-              <% if (artist.image) { %>
-                <img src="<%= artist.image %>" alt="<%= artist.name %>" class="artist-list-thumb">
-              <% } %>
-              <div>
-                <strong><%= artist.name %></strong>
-                <% if (artist.role) { %><span><%= artist.role %></span><% } %>
-              </div>
-            </li>
-          <% }) %>
-        </ul>
-      <% } %>
-
-      <% if (!artists.length) { %>
-        <p class="empty-state">Sanatçılar yakında eklenecek.</p>
-      <% } %>
-    </div>
-  </section>
-
   <section class="section" id="section-schedule">
     <div class="container">
       <h2 class="section-title">Program</h2>
